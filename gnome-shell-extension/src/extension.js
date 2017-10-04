@@ -15,9 +15,8 @@ let _text, _button; //fot the GUI
 
 //// Internal constants ////
 
-const BASE_URL = "http://kv78turbo.ovapi.nl/stopareacode/";
-const STOP_NAME = "TO BE FILLED IN";
-const DIRECTION_NUMBER = "TO BE FILLED IN";
+const BASE_URL = "http://kv78turbo.ovapi.nl/tpc/";
+const TIMING_POINT_CODE = "TO_BE_FILLED";
 
 const JSON_ERROR_CODE = {
 	NOTHING: 0,
@@ -62,7 +61,7 @@ function _hide_text() {
 }
 
 function _show_next_bus() {
-	_get_json(BASE_URL + STOP_NAME, function(json) {
+	_get_json(BASE_URL + TIMING_POINT_CODE, function(json) {
 		_text = new St.Label({ style_class: 'NextBusNL-label', text: _get_next_bus(json) });
 
 		Main.uiGroup.add_actor(_text);
@@ -88,11 +87,15 @@ function _get_next_bus(json) {
 		return "(1) No data found";
 	} else if (json == JSON_ERROR_CODE.INVALID) {
 		return "(2) Data invalid";
-	} else if (!json[STOP_NAME] || !json[STOP_NAME][DIRECTION_NUMBER]) {
+	} else if (!json[TIMING_POINT_CODE]) {
 		return "(3) Data invalid";
 	} else {
-		let items = json[STOP_NAME][DIRECTION_NUMBER]["Passes"];
+		let items = json[TIMING_POINT_CODE]["Passes"];
 		let busses = [];
+
+		if (Object.keys(items).length == 0) {
+			return "No more busses today";
+		}
 
 		for (let i = 0, item; item = items[Object.keys(items)[i]]; i++) {
 			busses.push( { time: item.ExpectedDepartureTime, text: _format_date(item.ExpectedDepartureTime) + " -> " + item.LinePublicNumber } );
@@ -109,7 +112,16 @@ function _get_next_bus(json) {
 			}
 		});
 
-		return busses[0].text + "\n" + busses[1].text + "\n" + busses[2].text;
+		let returnText = "";
+		for (let i = 0;i<3;i++) {
+			if (busses[i]) {
+				if (returnText != "") {
+					returnText+= "\n";
+				}
+				returnText+=busses[i].text;
+			}
+		}
+		return returnText;
 	}
 
 }
