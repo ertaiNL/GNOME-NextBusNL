@@ -12,7 +12,7 @@ To find the TIMING_POINT_CODE:
   You can find the correct one only by looking at the passes, and see which goes in the correct direction
 - Use this number as TIMING_POINT_CODE (e.g. 57140010).
 
-#gnome-shell-extension
+## gnome-shell-extension
 To use it already do:
 
 - Fill in the TIMING_POINT_CODE in gnome-shell-extension/src/extension.js
