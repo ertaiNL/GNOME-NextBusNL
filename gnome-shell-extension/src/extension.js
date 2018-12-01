@@ -83,22 +83,24 @@ function _show_next_bus() {
 function _get_next_bus(json) {
 	if (!json) {
 		return "(0) No data found";
-	} else if (json == JSON_ERROR_CODE.NOTHING) {
+	} else if (json === JSON_ERROR_CODE.NOTHING) {
 		return "(1) No data found";
-	} else if (json == JSON_ERROR_CODE.INVALID) {
+	} else if (json === JSON_ERROR_CODE.INVALID) {
 		return "(2) Data invalid";
 	} else if (!json[TIMING_POINT_CODE]) {
 		return "(3) Data invalid";
 	} else {
 		let items = json[TIMING_POINT_CODE]["Passes"];
 		let busses = [];
+		let size = Math.min(Object.keys(items).length, 3);
 
-		if (Object.keys(items).length == 0) {
+		if (size === 0) {
 			return "No more busses today";
 		}
 
-		for (let i = 0, item; item = items[Object.keys(items)[i]]; i++) {
-			busses.push( { time: item.ExpectedDepartureTime, text: _format_date(item.ExpectedDepartureTime) + " -> " + item.LinePublicNumber } );
+		for (let i=0; i < size; i++) {
+            let item = items[Object.keys(items)[i]];
+            busses.push( { time: item.ExpectedDepartureTime, text: _format_date(item.ExpectedDepartureTime) + " -> " + item.LinePublicNumber } );
 		}
 
 		//Sort by time
@@ -113,13 +115,11 @@ function _get_next_bus(json) {
 		});
 
 		let returnText = "";
-		for (let i = 0;i<3;i++) {
-			if (busses[i]) {
-				if (returnText != "") {
-					returnText+= "\n";
-				}
-				returnText+=busses[i].text;
+		for (let i = 0;i<size;i++) {
+			if (returnText !== "") {
+				returnText+= "\n";
 			}
+			returnText+=busses[i].text;
 		}
 		return returnText;
 	}
@@ -129,11 +129,11 @@ function _get_next_bus(json) {
 //format the date in a logical way
 function _format_date(date) {
 	var datePart = date.split("T");
-	if (datePart.length != 2) {
+	if (datePart.length !== 2) {
 		return date;
 	}
 	var timePart = datePart[1].split(":");
-	if (timePart.length != 3) {
+	if (timePart.length !== 3) {
 		return datePart[1];
 	}
 	return timePart[0] + ":" + timePart[1];
@@ -156,9 +156,7 @@ function _get_json(url, func) {
 		} catch (e) {
 			log("load_json_async got a invalid JSON");
 			func.call(this, JSON_ERROR_CODE.NOTHING);
-			return;
 		}
 	}));
-	return;
 }
 
