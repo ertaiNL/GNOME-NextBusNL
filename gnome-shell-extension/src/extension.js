@@ -98,7 +98,7 @@ function _get_next_bus(json) {
 			return "No more busses today";
 		}
 
-		for (let i=0; i < size; i++) {
+		for (let i=0; i < Object.keys(items).length; i++) {
             let item = items[Object.keys(items)[i]];
             busses.push( { time: item.ExpectedDepartureTime, text: _format_date(item.ExpectedDepartureTime) + " -> " + item.LinePublicNumber } );
 		}
