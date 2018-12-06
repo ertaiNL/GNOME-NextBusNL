@@ -79,7 +79,7 @@ function hideText() {
 
 function showNextBus() {
     getJSON(BASE_URL + TIMING_POINT_CODE, function(json) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text: getNextBus(json) });
+        _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json) });
 
         Main.uiGroup.add_actor(_text);
         _text.opacity = 255;
@@ -97,7 +97,7 @@ function showNextBus() {
     });
 }
 
-function isJSONValid(json) {
+function getTextToDisplay(json) {
     if (!json) {
         return '(0) No data found';
     } else if (json === JSON_ERROR_CODE.NOTHING) {
@@ -107,44 +107,39 @@ function isJSONValid(json) {
     } else if (!json[TIMING_POINT_CODE]) {
         return '(3) Data invalid';
     } else {
-        return '';
+        return getNextBusesText(json);
     }
 }
 
-function getNextBus(json) {
-    const valid = isJSONValid(json);
-    if (valid === '') {
-        const items = json[TIMING_POINT_CODE]['Passes'];
-        const busses = [];
-        const size = Math.min(Object.keys(items).length, 3);
+function getNextBusesText(json) {
+    const buses = getNextBuses(json);
+    const size = Math.min(buses.length, 3);
+    let returnText = '';
 
-        if (size === 0) {
-            return 'No more busses today';
+    for (let i = 0;i<size;i++) {
+        if (returnText !== '') {
+            returnText+= '\n';
         }
-
-        for (let i=0; i < Object.keys(items).length; i++) {
-            const item = items[Object.keys(items)[i]];
-            busses.push( { time: item.ExpectedDepartureTime, text: formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber } );
-        }
-
-        //Sort by time
-        busses.sort(sortBussesOnTime);
-
-        let returnText = '';
-        for (let i = 0;i<size;i++) {
-            if (returnText !== '') {
-                returnText+= '\n';
-            }
-            returnText+=busses[i].text;
-        }
-        return returnText;
-    } else {
-        return valid;
+        returnText+=buses[i].text;
     }
+    return returnText;
+}
+
+function getNextBuses(json) {
+    const items = json[TIMING_POINT_CODE]['Passes'];
+    const buses = [];
+
+    for (let i=0; i < Object.keys(items).length; i++) {
+        const item = items[Object.keys(items)[i]];
+        buses.push( { time: item.ExpectedDepartureTime, text: formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber } );
+    }
+
+    buses.sort(sortBusesOnTime);
+    return buses;
 }
 
 //function to pass to sort.
-function sortBussesOnTime(busA, busB) {
+function sortBusesOnTime(busA, busB) {
     return busA.time.localeCompare(busB.time);
 }
 
