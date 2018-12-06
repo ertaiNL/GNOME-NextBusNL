@@ -145,13 +145,7 @@ function getNextBus(json) {
 
 //function to pass to sort.
 function sortBussesOnTime(busA, busB) {
-    if (busA.time < busB.time) {
-        return -1;
-    } else if (busA.time > busB.time) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return busA.time.localeCompare(busB.time);
 }
 
 //format the date in a logical way
