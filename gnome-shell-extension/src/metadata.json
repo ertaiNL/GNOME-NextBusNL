@@ -4,6 +4,6 @@
 	"shell-version": ["3.18"],
   "name": "NextBus Netherlands",
   "original-author": "NextBusNL@ertai.nl",
-	"url": "https://github.com/ertaiNL/NextBusNL/gnome-shell-extension",
+	"url": "https://github.com/ertaiNL/NextBusNL",
 	"version": 2
 }
