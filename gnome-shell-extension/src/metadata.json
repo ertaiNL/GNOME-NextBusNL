@@ -1,9 +1,9 @@
 {
 	"uuid": "NextBusNL@ertai.nl",
-	"description": "See when you next bus comes. Only for The Netherlands",
-	"shell-version": ["3.18"],
-  "name": "NextBus Netherlands",
-  "original-author": "NextBusNL@ertai.nl",
+	"description": "See when the next bus comes at your stop. Only for The Netherlands",
+	"shell-version": ["3.28.3"],
+    "name": "NextBus Netherlands",
+    "original-author": "NextBusNL@ertai.nl",
 	"url": "https://github.com/ertaiNL/NextBusNL",
 	"version": 2
 }

@@ -21,6 +21,7 @@ const Lang = imports.lang;
 const Soup = imports.gi.Soup;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
+const Gio = imports.gi.Gio;
 
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -29,11 +30,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 let _httpSession, _userAgent;
 let _text, _button;
-
-//// Internal constants ////
-
-const BASE_URL = 'http://kv78turbo.ovapi.nl/tpc/';
-const TIMING_POINT_CODE = 'TO_BE_FILLED';
+let _settings, _baseUrl, _timingPointCode;
 
 const JSON_ERROR_CODE = {
     NOTHING: 0,
@@ -60,6 +57,11 @@ function init() {
     _userAgent = Me.metadata.uuid + '/' + Me.metadata.version.toString().trim();
     _httpSession = new Soup.Session();
     _httpSession.user_agent = _userAgent;
+
+    _settings = getSettings();
+
+    _baseUrl = _settings.get_string('base-url');
+    _timingPointCode = _settings.get_string('timing-point-code');
 }
 
 function enable() {
@@ -78,7 +80,7 @@ function hideText() {
 }
 
 function showNextBus() {
-    getJSON(BASE_URL + TIMING_POINT_CODE, function(json) {
+    getJSON(_baseUrl + _timingPointCode, function(json) {
         _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json) });
 
         Main.uiGroup.add_actor(_text);
@@ -104,7 +106,7 @@ function getTextToDisplay(json) {
         return '(1) No data found';
     } else if (json === JSON_ERROR_CODE.INVALID) {
         return '(2) Data invalid';
-    } else if (!json[TIMING_POINT_CODE]) {
+    } else if (!json[_timingPointCode]) {
         return '(3) Data invalid';
     } else {
         return getNextBusesText(json);
@@ -126,7 +128,7 @@ function getNextBusesText(json) {
 }
 
 function getNextBuses(json) {
-    const items = json[TIMING_POINT_CODE]['Passes'];
+    const items = json[_timingPointCode]['Passes'];
     const buses = [];
 
     for (let i=0; i < Object.keys(items).length; i++) {
@@ -158,6 +160,7 @@ function formatDate(date) {
 
 //get the json from the given url
 function getJSON(url, func) {
+    log('getJSON url = ' + url);
     _httpSession.abort();
     const message = Soup.form_request_new_from_hash('GET', url, {});
 
@@ -176,3 +179,31 @@ function getJSON(url, func) {
     }));
 }
 
+function getSettings() {
+    let schema = 'org.gnome.shell.extensions.nextbusnl';
+
+    const GioSSS = Gio.SettingsSchemaSource;
+
+    // check if this extension was built with "make zip-file", and thus
+    // has the schema files in a subfolder
+    // otherwise assume that extension has been installed in the
+    // same prefix as gnome-shell (and therefore schemas are available
+    // in the standard folders)
+    let schemaDir = Me.dir.get_child('schemas');
+    let schemaSource;
+    if (schemaDir.query_exists(null)) {
+        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
+            GioSSS.get_default(),
+            false);
+    } else {
+        schemaSource = GioSSS.get_default();
+    }
+
+    let schemaObj = schemaSource.lookup(schema, true);
+    if (!schemaObj) {
+        throw new Error('Schema ' + schema + ' could not be found for extension ' +
+            Me.metadata.uuid + '. Please check your installation.');
+    }
+
+    return new Gio.Settings({settings_schema: schemaObj});
+}
