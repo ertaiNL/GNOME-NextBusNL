@@ -15,12 +15,12 @@ To find the TIMING_POINT_CODE:
 ## gnome-shell-extension
 To use it already do:
 
-- Fill in the default value of the timing-point-code in the file in gnome-shell-extension/src/schemas
 - Compile the gschema in gnome-shell-extension/src/schemas
   - Go to the directory
   - run <code>glib-compile-schemas .</code> 
 - Copy gnome-shell-extension/src to ~/.local/share/gnome-shell/extensions/NextBusNL@ertai.nl
 - start Tweak-Tool (if not found in gnome. Install it).
+- fill in your timing-point-code.
 - enable the NextBusNL extension
 
 This should add at the right-top of your sceen a bus-icon. When you click on it you get the next busses for your stop.

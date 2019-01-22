@@ -6,7 +6,7 @@
             <description />
         </key>
         <key type="s" name="timing-point-code">
-            <default>'64000860'</default>
+            <default>''</default>
             <summary>The TimingPointCode of the busstop</summary>
             <description />
         </key>
