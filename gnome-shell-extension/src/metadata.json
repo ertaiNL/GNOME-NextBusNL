@@ -6,5 +6,6 @@
     "original-author": "NextBusNL@ertai.nl",
 	"url": "https://github.com/ertaiNL/NextBusNL",
 	"settings-schema": "org.gnome.shell.extensions.nextbusnl",
+	"gettext-domain": "nextbusnl",
 	"version": 3
 }

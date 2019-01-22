@@ -21,7 +21,6 @@ const Lang = imports.lang;
 const Soup = imports.gi.Soup;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
-const Gio = imports.gi.Gio;
 
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
