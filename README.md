@@ -15,10 +15,10 @@ To find the TIMING_POINT_CODE:
 ## gnome-shell-extension
 To use it already do:
 
-- Compile the gschema in gnome-shell-extension/src/schemas
-  - Go to the directory
-  - run <code>glib-compile-schemas .</code> 
-- Copy gnome-shell-extension/src to ~/.local/share/gnome-shell/extensions/NextBusNL@ertai.nl
+- Make the extension-package
+  - Go to the directory gnome-shell-extension
+  - run <code>make</code> 
+- Extract NextBusNL_<VERSION>.zip to ~/.local/share/gnome-shell/extensions/NextBusNL@ertai.nl
 - start Tweak-Tool (if not found in gnome. Install it).
 - fill in your timing-point-code.
 - enable the NextBusNL extension

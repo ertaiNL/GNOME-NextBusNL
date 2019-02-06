@@ -17,7 +17,10 @@
 # USA.
 version = 0.0.1
 
-all: clean compose
+all: clean generate compose
+
+generate:
+	glib-compile-schemas schemas/
 
 compose:
 	$(info *** COMPOSE ***)
@@ -25,4 +28,5 @@ compose:
 
 clean:
 	$(info *** CLEAN ***)
+	rm -f schemas/*.compiled
 	rm -f *.zip
