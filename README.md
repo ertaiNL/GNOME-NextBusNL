@@ -24,9 +24,3 @@ To use it already do:
 - enable the NextBusNL extension
 
 This should add at the right-top of your sceen a bus-icon. When you click on it you get the next busses for your stop.
-
-## windows program
-Not really usable yet. Still working on this.
-
-Uses the following libraries:
-- Newtonsoft.Json.10.0.3
