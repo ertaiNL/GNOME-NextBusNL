@@ -6,7 +6,7 @@ The API's are based on the OVapi REST interface.
 Documentation can be found at https://github.com/skywave/KV78Turbo-OVAPI/wiki.
 
 To find the TIMING_POINT_CODE:
-- Search your stop in http://kv78turbo.ovapi.nl/stopareacode/ (remember that this is a big document)
+- Search your stop in http://kv78turbo.ovapi.nl/stopareacode/ (please note that this is a big document)
 - Note your StopAreaCode and add it to the previous url. (e.g. http://kv78turbo.ovapi.nl/stopareacode/asdhly)
 - In this document you should find TimingPointCodes. Look at which "Stop"	you want to use as each goes in a different direction.
   You can find the correct one only by looking at the passes, and see which goes in the correct direction

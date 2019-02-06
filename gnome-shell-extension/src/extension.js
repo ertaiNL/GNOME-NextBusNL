@@ -30,7 +30,7 @@ const Convenience = Me.imports.convenience;
 
 let _httpSession, _userAgent;
 let _text, _button;
-let _settings, _baseUrl, _timingPointCode;
+let _settings;
 
 const JSON_ERROR_CODE = {
     NOTHING: 0,
@@ -59,9 +59,6 @@ function init() {
     _httpSession.user_agent = _userAgent;
 
     _settings = Convenience.getSettings();
-
-    _baseUrl = _settings.get_string('base-url');
-    _timingPointCode = _settings.get_string('timing-point-code');
 }
 
 function enable() {
@@ -80,8 +77,11 @@ function hideText() {
 }
 
 function showNextBus() {
-    getJSON(_baseUrl + _timingPointCode, function(json) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json) });
+    const baseUrl = _settings.get_string('base-url');
+    const timingPointCode = _settings.get_string('timing-point-code');
+
+    getJSON(baseUrl + timingPointCode, function(json) {
+        _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json, timingPointCode) });
 
         Main.uiGroup.add_actor(_text);
         _text.opacity = 255;
@@ -99,22 +99,22 @@ function showNextBus() {
     });
 }
 
-function getTextToDisplay(json) {
+function getTextToDisplay(json, timingPointCode) {
     if (!json) {
         return '(0) No data found';
     } else if (json === JSON_ERROR_CODE.NOTHING) {
         return '(1) No data found';
     } else if (json === JSON_ERROR_CODE.INVALID) {
         return '(2) Data invalid';
-    } else if (!json[_timingPointCode]) {
+    } else if (!json[timingPointCode]) {
         return '(3) Data invalid';
     } else {
-        return getNextBusesText(json);
+        return getNextBusesText(json, timingPointCode);
     }
 }
 
-function getNextBusesText(json) {
-    const buses = getNextBuses(json);
+function getNextBusesText(json, timingPointCode) {
+    const buses = getNextBuses(json, timingPointCode);
     const size = Math.min(buses.length, 3);
     let returnText = '';
 
@@ -127,8 +127,8 @@ function getNextBusesText(json) {
     return returnText;
 }
 
-function getNextBuses(json) {
-    const items = json[_timingPointCode]['Passes'];
+function getNextBuses(json, timingPointCode) {
+    const items = json[timingPointCode]['Passes'];
     const buses = [];
 
     for (let i=0; i < Object.keys(items).length; i++) {
