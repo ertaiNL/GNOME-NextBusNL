@@ -60,7 +60,7 @@ var NextBuses = new Lang.Class({
     },
 
     formatBusText: function(item) {
-        return item.LinePublicNumber + ' -> ' + this.formatDate(item.ExpectedDepartureTime);
+        return this.formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber;
     },
 
     //function to pass to sort.
