@@ -24,11 +24,12 @@ const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.assets.convenience;
 const jsonApi = Me.imports.assets.jsonApi;
+const nextBuses = Me.imports.assets.nextBuses;
 
 //// Global variables ////
 
 let _text, _button;
-let _settings, _jsonApi;
+let _settings, _jsonApi, _nextBuses;
 
 //// Public Methods ////
 
@@ -49,6 +50,7 @@ function init() {
     // Create user-agent string from uuid and version
 
     _jsonApi = new jsonApi.JsonApi();
+    _nextBuses = new nextBuses.NextBuses();
     _settings = Convenience.getSettings();
 }
 
@@ -72,7 +74,7 @@ function showNextBus() {
     const timingPointCode = _settings.get_string('timing-point-code');
 
     _jsonApi.get(baseUrl + timingPointCode, function(json) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json, timingPointCode) });
+        _text = new St.Label({ style_class: 'NextBusNL-label', text: _nextBuses.get(json, timingPointCode) });
 
         Main.uiGroup.add_actor(_text);
         _text.opacity = 255;
@@ -90,55 +92,3 @@ function showNextBus() {
     });
 }
 
-function getTextToDisplay(json, timingPointCode) {
-    if (!json || !json[timingPointCode]) {
-        return 'No data found';
-    } else {
-        return getNextBusesText(json, timingPointCode);
-    }
-}
-
-function getNextBusesText(json, timingPointCode) {
-    const buses = getNextBuses(json, timingPointCode);
-    const size = Math.min(buses.length, 3);
-    let returnText = '';
-
-    for (let i = 0;i<size;i++) {
-        if (returnText !== '') {
-            returnText+= '\n';
-        }
-        returnText+=buses[i].text;
-    }
-    return returnText;
-}
-
-function getNextBuses(json, timingPointCode) {
-    const items = json[timingPointCode]['Passes'];
-    const buses = [];
-
-    for (let i=0; i < Object.keys(items).length; i++) {
-        const item = items[Object.keys(items)[i]];
-        buses.push( { time: item.ExpectedDepartureTime, text: formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber } );
-    }
-
-    buses.sort(sortBusesOnTime);
-    return buses;
-}
-
-//function to pass to sort.
-function sortBusesOnTime(busA, busB) {
-    return busA.time.localeCompare(busB.time);
-}
-
-//format the date in a logical way
-function formatDate(date) {
-    const datePart = date.split('T');
-    if (datePart.length !== 2) {
-        return date;
-    }
-    const timePart = datePart[1].split(':');
-    if (timePart.length !== 3) {
-        return datePart[1];
-    }
-    return timePart[0] + ':' + timePart[1];
-}

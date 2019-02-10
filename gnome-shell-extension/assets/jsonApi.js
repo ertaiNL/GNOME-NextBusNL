@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018  Rob Snelders
+ * Copyright (C) 2019  Rob Snelders
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ var JsonApi = new Lang.Class({
 
     //get the json from the given url
     get: function(url, func) {
+        var result;
         log('get url = ' + url);
         this._httpSession.abort();
         const message = Soup.form_request_new_from_hash('GET', url, {});
