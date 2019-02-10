@@ -21,7 +21,7 @@ const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Convenience = Me.imports.assets.convenience;
 
 const Gettext = imports.gettext.domain('nextbusnl');
 const _ = Gettext.gettext;

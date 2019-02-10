@@ -24,7 +24,7 @@ const Tweener = imports.ui.tweener;
 
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Convenience = Me.imports.assets.convenience;
 
 //// Global variables ////
 
