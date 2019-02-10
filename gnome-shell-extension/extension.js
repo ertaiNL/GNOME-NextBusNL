@@ -17,25 +17,18 @@
  * USA.
  */
 const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
-const Soup = imports.gi.Soup;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
 
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.assets.convenience;
+const jsonApi = Me.imports.assets.jsonApi;
 
 //// Global variables ////
 
-let _httpSession, _userAgent;
 let _text, _button;
-let _settings;
-
-const JSON_ERROR_CODE = {
-    NOTHING: 0,
-    INVALID: -1
-};
+let _settings, _jsonApi;
 
 //// Public Methods ////
 
@@ -54,10 +47,8 @@ function init() {
     _button.connect('button-press-event', showNextBus);
 
     // Create user-agent string from uuid and version
-    _userAgent = Me.metadata.uuid + '/' + Me.metadata.version.toString().trim();
-    _httpSession = new Soup.Session();
-    _httpSession.user_agent = _userAgent;
 
+    _jsonApi = new jsonApi.JsonApi();
     _settings = Convenience.getSettings();
 }
 
@@ -80,7 +71,7 @@ function showNextBus() {
     const baseUrl = _settings.get_string('base-url');
     const timingPointCode = _settings.get_string('timing-point-code');
 
-    getJSON(baseUrl + timingPointCode, function(json) {
+    _jsonApi.get(baseUrl + timingPointCode, function(json) {
         _text = new St.Label({ style_class: 'NextBusNL-label', text: getTextToDisplay(json, timingPointCode) });
 
         Main.uiGroup.add_actor(_text);
@@ -100,14 +91,8 @@ function showNextBus() {
 }
 
 function getTextToDisplay(json, timingPointCode) {
-    if (!json) {
-        return '(0) No data found';
-    } else if (json === JSON_ERROR_CODE.NOTHING) {
-        return '(1) No data found';
-    } else if (json === JSON_ERROR_CODE.INVALID) {
-        return '(2) Data invalid';
-    } else if (!json[timingPointCode]) {
-        return '(3) Data invalid';
+    if (!json || !json[timingPointCode]) {
+        return 'No data found';
     } else {
         return getNextBusesText(json, timingPointCode);
     }
@@ -156,25 +141,4 @@ function formatDate(date) {
         return datePart[1];
     }
     return timePart[0] + ':' + timePart[1];
-}
-
-//get the json from the given url
-function getJSON(url, func) {
-    log('getJSON url = ' + url);
-    _httpSession.abort();
-    const message = Soup.form_request_new_from_hash('GET', url, {});
-
-    _httpSession.queue_message(message, Lang.bind(this, function(_httpSession, message) {
-        try {
-            if (!message.response_body.data) {
-                log('load_json_async got no JSON');
-                func.call(this, JSON_ERROR_CODE.NOTHING);
-                return;
-            }
-            func.call(this, JSON.parse(message.response_body.data));
-        } catch (e) {
-            log('load_json_async got a invalid JSON');
-            func.call(this, JSON_ERROR_CODE.NOTHING);
-        }
-    }));
 }
