@@ -26,6 +26,8 @@ const Convenience = Me.imports.assets.convenience;
 const jsonApi = Me.imports.assets.jsonApi;
 const nextBuses = Me.imports.assets.nextBuses;
 
+const nextBusesUrlPath = "/tpc/";
+
 //// Global variables ////
 
 let _text, _button;
@@ -73,7 +75,7 @@ function showNextBus() {
     const baseUrl = _settings.get_string('base-url');
     const timingPointCode = _settings.get_string('timing-point-code');
 
-    _jsonApi.get(baseUrl + timingPointCode, function(json) {
+    _jsonApi.get(baseUrl + nextBusesUrlPath + timingPointCode, function(json) {
         _text = new St.Label({ style_class: 'NextBusNL-label', text: _nextBuses.get(json, timingPointCode) });
 
         Main.uiGroup.add_actor(_text);

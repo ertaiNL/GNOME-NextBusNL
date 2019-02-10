@@ -1,7 +1,7 @@
 <schemalist gettext-domain="gnome-shell-extensions">
     <schema id="org.gnome.shell.extensions.nextbusnl" path="/org/gnome/shell/extensions/nextbusnl/">
         <key type="s" name="base-url">
-            <default>'http://kv78turbo.ovapi.nl/tpc/'</default>
+            <default>'https://kv78turbo.ovapi.nl'</default>
             <summary>The base-URL of the OV-api.</summary>
             <description />
         </key>
