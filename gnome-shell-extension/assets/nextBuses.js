@@ -18,7 +18,6 @@
  */
 const Lang = imports.lang;
 const Gettext = imports.gettext.domain('nextbusnl');
-const _ = Gettext.gettext;
 
 const Struct = (...keys) => ((...v) => keys.reduce((o, k, i) => {o[k] = v[i]; return o} , {}));
 const Bus = Struct('time', 'text');
@@ -26,39 +25,23 @@ const Bus = Struct('time', 'text');
 var NextBuses = new Lang.Class({
     Name: "NextBuses",
 
-    get: function (json, timingPointCode) {
-        if (!json || !json[timingPointCode]) {
-            return _('No data found');
-        } else {
-            return this._getText(json, timingPointCode);
-        }
-    },
-
-    _getText: function (json, timingPointCode) {
-        const buses = this._convertToBuses(json, timingPointCode);
-        const size = Math.min(buses.length, 3);
-        let returnText = '';
-
-        for (let i = 0; i < size; i++) {
-            if (returnText !== '') {
-                returnText += '\n';
-            }
-            returnText += buses[i].text;
-        }
-        return returnText;
-    },
-
-    _convertToBuses: function (json, timingPointCode) {
-        const items = json[timingPointCode]['Passes'];
+    convertToBuses: function (json) {
         const buses = [];
+
+        for (let i = 0; i < Object.keys(json).length; i++) {
+            this._convertTimingPointCodeToBuses(json[Object.keys(json)[i]], buses);
+        }
+        buses.sort(this._sortBusesOnTime);
+        return buses;
+    },
+
+    _convertTimingPointCodeToBuses: function (jsonTPC, buses) {
+        const items = jsonTPC['Passes'];
 
         for (let i = 0; i < Object.keys(items).length; i++) {
             const item = items[Object.keys(items)[i]];
             buses.push( Bus(item.ExpectedDepartureTime, this._formatBusText(item)) );
         }
-
-        buses.sort(this._sortBusesOnTime);
-        return buses;
     },
 
     _formatBusText: function(item) {
@@ -72,5 +55,5 @@ var NextBuses = new Lang.Class({
     _formatDate: function (date) {
         let d = new Date(date);
         return d.toLocaleTimeString(Gettext.locale, {hour: '2-digit', minute:'2-digit'});
-    }
+    },
 });

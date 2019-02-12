@@ -20,18 +20,18 @@ const Gtk = imports.gi.Gtk;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
 
+const Gettext = imports.gettext.domain('nextbusnl');
+const _ = Gettext.gettext;
+
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.assets.convenience;
-const jsonApi = Me.imports.assets.jsonApi;
-const nextBuses = Me.imports.assets.nextBuses;
-
-const nextBusesUrlPath = "/tpc/";
+const api = Me.imports.assets.api;
 
 //// Global variables ////
 
 let _text, _button;
-let _settings, _jsonApi, _nextBuses;
+let _settings, _api, _nextBuses;
 
 //// Public Methods ////
 
@@ -51,8 +51,7 @@ function init() {
 
     // Create user-agent string from uuid and version
 
-    _jsonApi = new jsonApi.JsonApi();
-    _nextBuses = new nextBuses.NextBuses();
+    _api = new api.Api();
     _settings = Convenience.getSettings();
 }
 
@@ -75,8 +74,8 @@ function showNextBus() {
     const baseUrl = _settings.get_string('base-url');
     const timingPointCode = _settings.get_string('timing-point-code');
 
-    _jsonApi.get(baseUrl + nextBusesUrlPath + timingPointCode, function(json) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text: _nextBuses.get(json, timingPointCode) });
+    _api.getNextBusses(baseUrl, timingPointCode, function(buses) {
+        _text = new St.Label({ style_class: 'NextBusNL-label', text:  getText(buses)});
 
         Main.uiGroup.add_actor(_text);
         _text.opacity = 255;
@@ -92,5 +91,23 @@ function showNextBus() {
                     transition: 'easeInQuad',
                     onComplete: hideText });
     });
+}
+
+
+function getText(buses) {
+    if (!buses) {
+        return _("No buses found");
+    } else {
+        const size = Math.min(buses.length, 3);
+        let returnText = '';
+
+        for (let i = 0; i < size; i++) {
+            if (returnText !== '') {
+                returnText += '\n';
+            }
+            returnText += buses[i].text;
+        }
+        return returnText;
+    }
 }
 
