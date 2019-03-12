@@ -47,7 +47,7 @@ function init() {
         style_class: 'system-status-icon' });
 
     _button.set_child(icon);
-    _button.connect('button-press-event', showNextBus);
+    _button.connect('button-press-event', _showNextBus);
 
     // Create user-agent string from uuid and version
 
@@ -65,17 +65,17 @@ function disable() {
 
 //// Private methods ////
 
-function hideText() {
+function _hideText() {
     Main.uiGroup.remove_actor(_text);
     _text = null;
 }
 
-function showNextBus() {
+function _showNextBus() {
     const baseUrl = _settings.get_string('base-url');
     const timingPointCode = _settings.get_string('timing-point-code');
 
     _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text:  getText(buses)});
+        _text = new St.Label({ style_class: 'NextBusNL-label', text:  _getText(buses)});
 
         Main.uiGroup.add_actor(_text);
         _text.opacity = 255;
@@ -89,11 +89,11 @@ function showNextBus() {
                 { opacity: 0,
                     time: 4,
                     transition: 'easeInQuad',
-                    onComplete: hideText });
+                    onComplete: _hideText });
     });
 }
 
-function getText(buses) {
+function _getText(buses) {
     if (buses.length === 0) {
         return _("No buses found");
     } else {
