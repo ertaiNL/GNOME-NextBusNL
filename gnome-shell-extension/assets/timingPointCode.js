@@ -26,24 +26,31 @@ const Bus = Struct('time', 'text');
 var TimingPointCode = new Lang.Class({
     Name: "TimingPointCode",
 
-    getNextBuses: function (json, timingPointCode) {
-        if (!json || !json[timingPointCode]) {
+    getNextBuses: function(json) {
+        if (!json) {
             return [];
         } else {
-            return this._convertToBuses(json, timingPointCode);
+            return this._convertJSON(json);
         }
     },
 
-    _convertToBuses: function (json, timingPointCode) {
-        const items = json[timingPointCode]['Passes'];
+    _convertJSON: function(json) {
         const buses = [];
 
+        for (let i = 0; i < Object.keys(json).length; i++) {
+            const tpc = json[Object.keys(json)[i]];
+            this._convertTPC(buses, tpc['Passes']);
+        }
+
+        buses.sort(this._sortBusesOnTime);
+        return buses;
+    },
+
+    _convertTPC: function(buses, items) {
         for (let i = 0; i < Object.keys(items).length; i++) {
             const item = items[Object.keys(items)[i]];
             buses.push( Bus(item.ExpectedDepartureTime, this._formatBusText(item)) );
         }
-
-        buses.sort(this._sortBusesOnTime);
         return buses;
     },
 
