@@ -31,7 +31,7 @@ const api = Me.imports.assets.api;
 //// Global variables ////
 
 let _text, _button;
-let _settings, _api, _nextBuses;
+let _settings, _api;
 
 //// Public Methods ////
 
@@ -74,7 +74,7 @@ function showNextBus() {
     const baseUrl = _settings.get_string('base-url');
     const timingPointCode = _settings.get_string('timing-point-code');
 
-    _api.getNextBusses(baseUrl, timingPointCode, function(buses) {
+    _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
         _text = new St.Label({ style_class: 'NextBusNL-label', text:  getText(buses)});
 
         Main.uiGroup.add_actor(_text);
@@ -93,9 +93,8 @@ function showNextBus() {
     });
 }
 
-
 function getText(buses) {
-    if (!buses) {
+    if (buses.length === 0) {
         return _("No buses found");
     } else {
         const size = Math.min(buses.length, 3);

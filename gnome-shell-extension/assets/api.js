@@ -46,7 +46,7 @@ var Api = new Lang.Class({
             try {
                 json = JSON.parse(message.response_body.data);
             } catch (e) {
-                log('load_json_async got a no or invalid JSON');
+                log('NextBusNL: load_json_async got a no or invalid JSON');
             }
             apiFunc.call(this, json, func);
         }));
