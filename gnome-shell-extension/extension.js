@@ -37,19 +37,11 @@ let _settings, _api;
 
 function init() {
     Gtk.IconTheme.get_default().append_search_path(Me.dir.get_path());
-    _button = new St.Bin({ style_class: 'panel-button',
-        reactive: true,
-        can_focus: true,
-        x_fill: true,
-        y_fill: false,
-        track_hover: true });
-    const icon = new St.Icon({ icon_name: 'NextBusNL_icon',
-        style_class: 'system-status-icon' });
+    const icon = new St.Icon({ icon_name: 'NextBusNL_icon', style_class: 'system-status-icon' });
 
+    _button = new St.Bin({ style_class: 'panel-button', reactive: true, can_focus: true, track_hover: true });
     _button.set_child(icon);
     _button.connect('button-press-event', _showNextBus);
-
-    // Create user-agent string from uuid and version
 
     _api = new api.Api();
     _settings = Convenience.getSettings();
@@ -64,7 +56,6 @@ function disable() {
 }
 
 //// Private methods ////
-
 function _hideText() {
     Main.uiGroup.remove_actor(_text);
     _text = null;
@@ -75,22 +66,22 @@ function _showNextBus() {
     const timingPointCode = _settings.get_string('timing-point-code');
 
     _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text:  _getText(buses)});
-
+        _text = new St.Label({ style_class: 'NextBusNL-label', text: _getText(buses)});
         Main.uiGroup.add_actor(_text);
-        _text.opacity = 255;
-
         const monitor = Main.layoutManager.primaryMonitor;
 
-        _text.set_position(monitor.x + Math.floor(monitor.width / 2 - _text.width / 2),
-                monitor.y + Math.floor(monitor.height / 2 - _text.height / 2));
+        _text.set_position(_getXPosition(monitor, _text.width), _getYPosition(monitor, _text.height));
 
-        Tweener.addTween(_text,
-                { opacity: 0,
-                    time: 4,
-                    transition: 'easeInQuad',
-                    onComplete: _hideText });
+        Tweener.addTween(_text, {opacity: 0, time: 4, transition: 'easeInQuad', onComplete: _hideText});
     });
+}
+
+function _getXPosition(monitor, width) {
+    return monitor.x + Math.floor(monitor.width / 2 - width / 2);
+}
+
+function _getYPosition(monitor, height) {
+    return monitor.y + Math.floor(monitor.height / 2 - height / 2);
 }
 
 function _getText(buses) {
