@@ -104,9 +104,18 @@ function _getText(buses) {
             if (returnText !== '') {
                 returnText += '\n';
             }
-            returnText += buses[i].text;
+            returnText += _formatBusText(buses[i]);
         }
         return returnText;
     }
+}
+
+function _formatBusText(item) {
+    return _formatDate(item.time) + ' -> ' + item.nr + ' ' + item.destination;
+}
+
+function _formatDate(date) {
+    let d = new Date(date);
+    return d.toLocaleTimeString(Gettext.locale, {hour: '2-digit', minute:'2-digit'});
 }
 

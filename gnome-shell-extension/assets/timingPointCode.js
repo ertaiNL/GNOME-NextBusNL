@@ -21,7 +21,7 @@ const Gettext = imports.gettext.domain('nextbusnl');
 const _ = Gettext.gettext;
 
 const Struct = (...keys) => ((...v) => keys.reduce((o, k, i) => {o[k] = v[i]; return o} , {}));
-const Bus = Struct('time', 'text');
+const Bus = Struct('time', 'nr', 'destination');
 
 var TimingPointCode = new Lang.Class({
     Name: "TimingPointCode",
@@ -49,21 +49,12 @@ var TimingPointCode = new Lang.Class({
     _convertTPC: function(buses, items) {
         for (let i = 0; i < Object.keys(items).length; i++) {
             const item = items[Object.keys(items)[i]];
-            buses.push( Bus(item.ExpectedDepartureTime, this._formatBusText(item)) );
+            buses.push( Bus(item.ExpectedDepartureTime, item.LinePublicNumber, item.DestinationName50) );
         }
         return buses;
     },
 
-    _formatBusText: function(item) {
-        return this._formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber + ' ' + item.DestinationName50;
-    },
-
     _sortBusesOnTime: function (busA, busB) {
         return busA.time.localeCompare(busB.time);
-    },
-
-    _formatDate: function (date) {
-        let d = new Date(date);
-        return d.toLocaleTimeString(Gettext.locale, {hour: '2-digit', minute:'2-digit'});
     }
 });
