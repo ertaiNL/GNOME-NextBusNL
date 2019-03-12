@@ -48,7 +48,7 @@ var TimingPointCode = new Lang.Class({
     },
 
     _formatBusText: function(item) {
-        return this._formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber;
+        return this._formatDate(item.ExpectedDepartureTime) + ' -> ' + item.LinePublicNumber + ' ' + item.DestinationName50;
     },
 
     _sortBusesOnTime: function (busA, busB) {
