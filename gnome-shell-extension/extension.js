@@ -97,7 +97,7 @@ function getText(buses) {
     if (buses.length === 0) {
         return _("No buses found");
     } else {
-        const size = Math.min(buses.length, 3);
+        const size = Math.min(buses.length, 5);
         let returnText = '';
 
         for (let i = 0; i < size; i++) {
