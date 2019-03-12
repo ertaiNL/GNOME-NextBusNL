@@ -21,7 +21,7 @@ const Gettext = imports.gettext.domain('nextbusnl');
 const _ = Gettext.gettext;
 
 const Struct = (...keys) => ((...v) => keys.reduce((o, k, i) => {o[k] = v[i]; return o} , {}));
-const Bus = Struct('time', 'nr', 'destination');
+const Bus = Struct('time', 'line', 'destination');
 
 var TimingPointCode = new Lang.Class({
     Name: "TimingPointCode",

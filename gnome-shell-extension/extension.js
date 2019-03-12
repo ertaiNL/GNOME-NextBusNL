@@ -111,7 +111,7 @@ function _getText(buses) {
 }
 
 function _formatBusText(item) {
-    return _formatDate(item.time) + ' -> ' + item.nr + ' ' + item.destination;
+    return _formatDate(item.time) + ' -> ' + item.line + ' ' + item.destination;
 }
 
 function _formatDate(date) {
