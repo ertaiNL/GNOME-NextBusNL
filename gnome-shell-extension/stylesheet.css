@@ -1,8 +1,22 @@
 
-.NextBusNL-label {
+.NextBusNL-font {
     font-size: 36px;
     font-weight: bold;
     color: #ffffff;
+}
+
+.NextBusNL-right {
+    text-align: right;
+    width: 60px;
+}
+
+.NextBusNL-inner-layoutbox {
+    padding: .3em;
+}
+
+.NextBusNL-outer-layoutbox {
+    border: 1px;
+    border-color: rgba(245,245,245,0.7);
     background-color: rgba(10,10,10,0.7);
     border-radius: 5px;
     padding: .5em;

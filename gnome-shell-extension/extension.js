@@ -30,7 +30,7 @@ const api = Me.imports.assets.api;
 
 //// Global variables ////
 
-let _text, _button;
+let _button, _nextBusesBox;
 let _settings, _api;
 
 //// Public Methods ////
@@ -56,9 +56,9 @@ function disable() {
 }
 
 //// Private methods ////
-function _hideText() {
-    Main.uiGroup.remove_actor(_text);
-    _text = null;
+function _hideNextBuses() {
+    Main.uiGroup.remove_actor(_nextBusesLayout);
+    _nextBusesLayout = null;
 }
 
 function _showNextBus() {
@@ -66,47 +66,66 @@ function _showNextBus() {
     const timingPointCode = _settings.get_string('timing-point-code');
 
     _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
-        _text = new St.Label({ style_class: 'NextBusNL-label', text: _getText(buses)});
-        Main.uiGroup.add_actor(_text);
-        const monitor = Main.layoutManager.primaryMonitor;
+        _nextBusesBox = new St.BoxLayout({ vertical: true, style_class: 'NextBusNL-outer-layoutbox' });
 
-        _text.set_position(_getXPosition(monitor, _text.width), _getYPosition(monitor, _text.height));
+        _addBusesToActor(_nextBusesBox, buses);
 
-        Tweener.addTween(_text, {opacity: 0, time: 4, transition: 'easeInQuad', onComplete: _hideText});
+        Main.uiGroup.add_actor(_nextBusesBox);
+
+        _nextBusesBox.set_position(_getXPosition(_nextBusesBox), _getYPosition(_nextBusesBox));
+
+        Tweener.addTween(_nextBusesBox, {opacity: 0, time: 4, transition: 'easeInQuad', onComplete: _hideNextBuses});
     });
 }
 
-function _getXPosition(monitor, width) {
-    return monitor.x + Math.floor(monitor.width / 2 - width / 2);
+function _getMonitor() {
+    return Main.layoutManager.primaryMonitor;
 }
 
-function _getYPosition(monitor, height) {
-    return monitor.y + Math.floor(monitor.height / 2 - height / 2);
+function _getXPosition(box) {
+    const monitor = _getMonitor();
+    return monitor.x + Math.floor(monitor.width / 2 - box.width / 2);
 }
 
-function _getText(buses) {
-    if (buses.length === 0) {
-        return _("No buses found");
+function _getYPosition(box) {
+    const monitor = _getMonitor();
+    return monitor.y + Math.floor(monitor.height / 2 - box.height / 2);
+}
+
+function _addBusesToActor(box, buses) {
+    const size = Math.min(buses.length, 5);
+    if (size === 0) {
+        _addTextToBox(box, _("No buses found"));
     } else {
-        const size = Math.min(buses.length, 5);
-        let returnText = '';
-
         for (let i = 0; i < size; i++) {
-            if (returnText !== '') {
-                returnText += '\n';
-            }
-            returnText += _formatBusText(buses[i]);
+            _addBusToBox(box, buses[i]);
         }
-        return returnText;
     }
 }
 
-function _formatBusText(item) {
-    return _formatDate(item.time) + ' -> ' + item.line + ' ' + item.destination;
+function _addBusToBox(box, bus) {
+    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-inner-layoutbox' });
+    layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: _formatBusTime(bus)}));
+    layout.add_actor(new St.Label({ style_class: 'NextBusNL-font NextBusNL-right', text: _formatBusLine(bus)}));
+    layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: _formatBusDestination(bus)}));
+    box.add(layout);
 }
 
-function _formatDate(date) {
-    let d = new Date(date);
-    return d.toLocaleTimeString(Gettext.locale, {hour: '2-digit', minute:'2-digit'});
+function _addTextToBox(box, text) {
+    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-inner-layoutbox' });
+    layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: text}));
+    box.add(layout);
 }
 
+function _formatBusTime(bus) {
+    let d = new Date(bus.time);
+    return d.toLocaleTimeString(Gettext.locale, {hour: '2-digit', minute:'2-digit'}) + " -> ";
+}
+
+function _formatBusLine(bus) {
+    return bus.line;
+}
+
+function _formatBusDestination(bus) {
+    return " " + bus.destination;
+}
