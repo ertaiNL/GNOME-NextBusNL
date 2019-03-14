@@ -10,13 +10,12 @@
     width: 60px;
 }
 
-.NextBusNL-inner-layoutbox {
+.NextBusNL-linebox {
     padding: .3em;
 }
 
-.NextBusNL-outer-layoutbox {
-    border: 1px;
-    border-color: rgba(245,245,245,0.7);
+.NextBusNL-outerbox {
+    border: 1px rgba(245,245,245,0.7);
     background-color: rgba(10,10,10,0.7);
     border-radius: 5px;
     padding: .5em;

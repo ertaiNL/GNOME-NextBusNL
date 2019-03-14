@@ -36,8 +36,8 @@ let _settings, _api;
 //// Public Methods ////
 
 function init() {
-    Gtk.IconTheme.get_default().append_search_path(Me.dir.get_path());
-    const icon = new St.Icon({ icon_name: 'NextBusNL_icon', style_class: 'system-status-icon' });
+    Gtk.IconTheme.get_default().append_search_path(Me.dir.get_path() + "/icons");
+    const icon = new St.Icon({ icon_name: 'NextBusNL', style_class: 'system-status-icon' });
 
     _button = new St.Bin({ style_class: 'panel-button', reactive: true, can_focus: true, track_hover: true });
     _button.set_child(icon);
@@ -66,7 +66,7 @@ function _showNextBus() {
     const timingPointCode = _settings.get_string('timing-point-code');
 
     _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
-        _nextBusesBox = new St.BoxLayout({ vertical: true, style_class: 'NextBusNL-outer-layoutbox' });
+        _nextBusesBox = new St.BoxLayout({ vertical: true, style_class: 'NextBusNL-outerbox' });
 
         _addBusesToActor(_nextBusesBox, buses);
 
@@ -104,7 +104,7 @@ function _addBusesToActor(box, buses) {
 }
 
 function _addBusToBox(box, bus) {
-    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-inner-layoutbox' });
+    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-linebox' });
     layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: _formatBusTime(bus)}));
     layout.add_actor(new St.Label({ style_class: 'NextBusNL-font NextBusNL-right', text: _formatBusLine(bus)}));
     layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: _formatBusDestination(bus)}));
@@ -112,7 +112,7 @@ function _addBusToBox(box, bus) {
 }
 
 function _addTextToBox(box, text) {
-    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-inner-layoutbox' });
+    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-linebox' });
     layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: text}));
     box.add(layout);
 }
