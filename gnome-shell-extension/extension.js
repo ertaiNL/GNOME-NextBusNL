@@ -19,6 +19,7 @@
 const Gtk = imports.gi.Gtk;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
+const Shell = imports.gi.Shell;
 
 const Gettext = imports.gettext.domain('nextbusnl');
 const _ = Gettext.gettext;
@@ -67,7 +68,7 @@ function _showNextBus() {
 
     _api.getNextBuses(baseUrl, timingPointCode, function(buses) {
         _nextBusesBox = new St.BoxLayout({ vertical: true, style_class: 'NextBusNL-outerbox' });
-
+        _addBarToBox(_nextBusesBox);
         _addBusesToActor(_nextBusesBox, buses);
 
         Main.uiGroup.add_actor(_nextBusesBox);
@@ -101,6 +102,12 @@ function _addBusesToActor(box, buses) {
             _addBusToBox(box, buses[i]);
         }
     }
+}
+
+function _addBarToBox(box) {
+    const layout = new St.BoxLayout({ vertical: false, style_class: 'NextBusNL-bar' });
+    layout.add_actor(new St.Label({ style_class: 'NextBusNL-font', text: 'NextBusNL'}));
+    box.add(layout);
 }
 
 function _addBusToBox(box, bus) {

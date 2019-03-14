@@ -10,6 +10,12 @@
     width: 60px;
 }
 
+.NextBusNL-bar {
+    border-bottom: 1px;
+    border-color: rgba(245,245,245,0.7);
+    padding: .3em;
+}
+
 .NextBusNL-linebox {
     padding: .3em;
 }
