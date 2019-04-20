@@ -75,7 +75,7 @@ function _showNextBus() {
 
         _nextBusesBox.set_position(_getXPosition(_nextBusesBox), _getYPosition(_nextBusesBox));
 
-        Tweener.addTween(_nextBusesBox, {opacity: 0, time: 4, transition: 'easeInQuad', onComplete: _hideNextBuses});
+        Tweener.addTween(_nextBusesBox, {opacity: 0, time: 8, transition: 'easeInQuad', onComplete: _hideNextBuses});
     });
 }
 
